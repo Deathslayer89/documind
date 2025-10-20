@@ -1,0 +1,212 @@
+{
+  "timestamp": "2025-10-20T09:49:08.302155",
+  "prompt_evaluations": [
+    {
+      "prompt_key": "detailed",
+      "prompt_name": "Detailed Context-Based (Current)",
+      "query_results": [
+        {
+          "query": "What is the Floyd-Warshall algorithm?",
+          "answer_preview": "Based on the provided context, the Floyd-Warshall algorithm is a dynamic programming algorithm for solving the All-Pairs Shortest Paths problem. It finds the shortest distance between every pair of ve...",
+          "word_count": 412,
+          "has_unknown_admission": false,
+          "quality_score": 6.5,
+          "sources_count": 3
+        },
+        {
+          "query": "Explain dynamic programming",
+          "answer_preview": "Based on the provided context, here is a detailed explanation of dynamic programming.\n\nDynamic programming is an algorithmic technique for solving problems by breaking them down into smaller, overlapp...",
+          "word_count": 533,
+          "has_unknown_admission": false,
+          "quality_score": 9.0,
+          "sources_count": 3
+        },
+        {
+          "query": "How does gradient descent work?",
+          "answer_preview": "Based on the provided context, here is a detailed explanation of how gradient descent works:\n\nGradient descent is an algorithm used to optimize a loss function by finding the parameter values that min...",
+          "word_count": 579,
+          "has_unknown_admission": false,
+          "quality_score": 6.5,
+          "sources_count": 3
+        },
+        {
+          "query": "What is cryptography?",
+          "answer_preview": "Based on the provided context, there is no definition for the term \"cryptography.\"\n\nHowever, the context does mention \"ciphers,\" which are a central component of cryptography. According to the text:\n\n...",
+          "word_count": 69,
+          "has_unknown_admission": false,
+          "quality_score": 7.5,
+          "sources_count": 3
+        },
+        {
+          "query": "What is reinforcement learning?",
+          "answer_preview": "Based on the provided context, I cannot answer the question \"What is reinforcement learning?\" The provided text does not contain a definition or explanation of reinforcement learning.\n\nInstead, the co...",
+          "word_count": 177,
+          "has_unknown_admission": true,
+          "quality_score": 10,
+          "sources_count": 3
+        }
+      ],
+      "overall_metrics": {
+        "average_quality_score": 7.9,
+        "average_word_count": 354.0,
+        "total_queries": 5
+      }
+    },
+    {
+      "prompt_key": "concise",
+      "prompt_name": "Concise Direct",
+      "query_results": [
+        {
+          "query": "What is the Floyd-Warshall algorithm?",
+          "answer_preview": "Based on the context, the Floyd-Warshall algorithm is Floyd's improvement of Warshall's algorithm, used to find the shortest paths between all pairs of vertices in a graph. Its pseudocode is as follow...",
+          "word_count": 68,
+          "has_unknown_admission": false,
+          "quality_score": 5.0,
+          "sources_count": 3
+        },
+        {
+          "query": "Explain dynamic programming",
+          "answer_preview": "Based on the provided context, dynamic programming is an algorithmic technique that uses **memoization** to solve problems.\n\nThe key steps are:\n1.  **Memoization Structure:** Results of subproblems ar...",
+          "word_count": 129,
+          "has_unknown_admission": false,
+          "quality_score": 8.0,
+          "sources_count": 3
+        },
+        {
+          "query": "How does gradient descent work?",
+          "answer_preview": "Based on the context, gradient descent works by computing the rate of change of the loss with respect to each parameter and then modifying those parameters in the direction that causes the loss to dec...",
+          "word_count": 35,
+          "has_unknown_admission": false,
+          "quality_score": 5.0,
+          "sources_count": 3
+        },
+        {
+          "query": "What is cryptography?",
+          "answer_preview": "I don't know based on the provided context.",
+          "word_count": 8,
+          "has_unknown_admission": true,
+          "quality_score": 3.0,
+          "sources_count": 3
+        },
+        {
+          "query": "What is reinforcement learning?",
+          "answer_preview": "I don't know based on the provided context.",
+          "word_count": 8,
+          "has_unknown_admission": true,
+          "quality_score": 10,
+          "sources_count": 3
+        }
+      ],
+      "overall_metrics": {
+        "average_quality_score": 6.2,
+        "average_word_count": 49.6,
+        "total_queries": 5
+      }
+    },
+    {
+      "prompt_key": "structured",
+      "prompt_name": "Structured Response",
+      "query_results": [
+        {
+          "query": "What is the Floyd-Warshall algorithm?",
+          "answer_preview": "**1. Direct answer**\nThe Floyd-Warshall algorithm is a dynamic programming algorithm used to find the shortest paths between all pairs of vertices in a graph. It works by iterating through all vertice...",
+          "word_count": 185,
+          "has_unknown_admission": false,
+          "quality_score": 6.5,
+          "sources_count": 3
+        },
+        {
+          "query": "Explain dynamic programming",
+          "answer_preview": "Based on the context provided, here is an explanation of dynamic programming:\n\n1.  **Direct answer**\n    Dynamic programming is an algorithmic technique that solves problems by breaking them down into...",
+          "word_count": 258,
+          "has_unknown_admission": false,
+          "quality_score": 9.0,
+          "sources_count": 3
+        },
+        {
+          "query": "How does gradient descent work?",
+          "answer_preview": "**1. Direct answer**\nGradient descent is an algorithm that optimizes a loss function by computing its rate of change with respect to each parameter. It then modifies each parameter in the direction th...",
+          "word_count": 180,
+          "has_unknown_admission": false,
+          "quality_score": 6.5,
+          "sources_count": 3
+        },
+        {
+          "query": "What is cryptography?",
+          "answer_preview": "The provided context does not contain information to answer this question.",
+          "word_count": 11,
+          "has_unknown_admission": true,
+          "quality_score": 3.0,
+          "sources_count": 3
+        },
+        {
+          "query": "What is reinforcement learning?",
+          "answer_preview": "The provided context does not contain information to answer this question.",
+          "word_count": 11,
+          "has_unknown_admission": true,
+          "quality_score": 10,
+          "sources_count": 3
+        }
+      ],
+      "overall_metrics": {
+        "average_quality_score": 7.0,
+        "average_word_count": 129.0,
+        "total_queries": 5
+      }
+    },
+    {
+      "prompt_key": "expert",
+      "prompt_name": "Expert Technical Style",
+      "query_results": [
+        {
+          "query": "What is the Floyd-Warshall algorithm?",
+          "answer_preview": "Based on the provided context, here is a comprehensive technical answer about the Floyd-Warshall algorithm.\n\n### Overview\n\nThe **Floyd-Warshall algorithm** is a dynamic programming algorithm designed ...",
+          "word_count": 804,
+          "has_unknown_admission": false,
+          "quality_score": 6.5,
+          "sources_count": 3
+        },
+        {
+          "query": "Explain dynamic programming",
+          "answer_preview": "Based on the provided context, here is a comprehensive technical explanation of dynamic programming.\n\n### Overview of Dynamic Programming\n\nDynamic programming is an algorithmic paradigm for solving co...",
+          "word_count": 1042,
+          "has_unknown_admission": false,
+          "quality_score": 9.0,
+          "sources_count": 3
+        },
+        {
+          "query": "How does gradient descent work?",
+          "answer_preview": "Based on the provided context, here is a comprehensive technical answer explaining how gradient descent works.\n\n### Overview of Gradient Descent\n\nGradient descent is an iterative optimization algorith...",
+          "word_count": 922,
+          "has_unknown_admission": false,
+          "quality_score": 6.5,
+          "sources_count": 3
+        },
+        {
+          "query": "What is cryptography?",
+          "answer_preview": "Based on the context provided, here is a comprehensive technical answer regarding cryptography.\n\n### Information Available in the Context\n\nThe provided text does not contain the word \"cryptography\" an...",
+          "word_count": 370,
+          "has_unknown_admission": true,
+          "quality_score": 8.0,
+          "sources_count": 3
+        },
+        {
+          "query": "What is reinforcement learning?",
+          "answer_preview": "Based on the provided context, there is no information about **reinforcement learning**.\n\nThe context provided focuses exclusively on a different subcategory of AI known as **deep learning**, and more...",
+          "word_count": 369,
+          "has_unknown_admission": true,
+          "quality_score": 10,
+          "sources_count": 3
+        }
+      ],
+      "overall_metrics": {
+        "average_quality_score": 8.0,
+        "average_word_count": 701.4,
+        "total_queries": 5
+      }
+    }
+  ],
+  "best_prompt": "Expert Technical Style",
+  "best_prompt_key": "expert",
+  "best_score": 8.0
+}

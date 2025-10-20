@@ -1,27 +1,67 @@
 version: '3.8'
 
 services:
+  # Main RAG Application
   rag-app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: documind-rag:latest
+    container_name: documind-rag-app
     ports:
-      - "8501:8501"
+      - "${APP_PORT:-8501}:8501"
     volumes:
-      - ./data:/app/data
-      - ./chroma_db:/app/chroma_db
-      - ./.env:/app/.env
+      # Data persistence
+      - ./data:/app/data:ro  # Read-only for security
+      - chroma-db-data:/app/chroma_db  # Named volume for vector DB
+      - feedback-data:/app/feedback_data  # Named volume for feedback
+      - ./.env:/app/.env:ro  # Read-only env file
     environment:
+      # Application settings
       - PYTHONPATH=/app
       - STREAMLIT_SERVER_PORT=8501
       - STREAMLIT_SERVER_ADDRESS=0.0.0.0
+      - STREAMLIT_SERVER_HEADLESS=true
+      - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+      # Load env vars from .env file
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2:-false}
+      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY:-}
+      - LANGCHAIN_PROJECT=${LANGCHAIN_PROJECT:-documind-rag}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
-    container_name: cs-rag-system
+      start_period: 60s
+    networks:
+      - rag-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
+# Named volumes for data persistence
+volumes:
+  chroma-db-data:
+    driver: local
+    name: documind-chroma-db
+  feedback-data:
+    driver: local
+    name: documind-feedback
+
+# Network configuration
 networks:
-  default:
-    name: rag-network
+  rag-network:
+    driver: bridge
+    name: documind-network

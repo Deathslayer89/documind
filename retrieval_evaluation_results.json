@@ -1,0 +1,207 @@
+{
+  "timestamp": "2025-10-20T09:41:04.845079",
+  "approaches": [
+    {
+      "name": "Semantic Search (k=3)",
+      "k": 3,
+      "search_type": "similarity",
+      "query_results": [
+        {
+          "query": "What is the Floyd-Warshall algorithm?",
+          "retrieved_count": 3,
+          "relevant_count": 3,
+          "precision": 1.0,
+          "avg_keyword_matches": 4.0
+        },
+        {
+          "query": "Explain dynamic programming",
+          "retrieved_count": 3,
+          "relevant_count": 3,
+          "precision": 1.0,
+          "avg_keyword_matches": 3.0
+        },
+        {
+          "query": "How does gradient descent work?",
+          "retrieved_count": 3,
+          "relevant_count": 3,
+          "precision": 1.0,
+          "avg_keyword_matches": 2.6666666666666665
+        },
+        {
+          "query": "What is object-oriented programming?",
+          "retrieved_count": 3,
+          "relevant_count": 1,
+          "precision": 0.3333333333333333,
+          "avg_keyword_matches": 0.6666666666666666
+        },
+        {
+          "query": "What are sorting algorithms?",
+          "retrieved_count": 3,
+          "relevant_count": 3,
+          "precision": 1.0,
+          "avg_keyword_matches": 2.3333333333333335
+        }
+      ],
+      "overall_metrics": {
+        "total_queries": 5,
+        "total_retrieved": 15,
+        "total_relevant": 13,
+        "overall_precision": 0.8666666666666667,
+        "avg_keyword_score": 2.533333333333333
+      },
+      "combined_score": 1.3666666666666667
+    },
+    {
+      "name": "Semantic Search (k=5) - CURRENT",
+      "k": 5,
+      "search_type": "similarity",
+      "query_results": [
+        {
+          "query": "What is the Floyd-Warshall algorithm?",
+          "retrieved_count": 5,
+          "relevant_count": 5,
+          "precision": 1.0,
+          "avg_keyword_matches": 4.0
+        },
+        {
+          "query": "Explain dynamic programming",
+          "retrieved_count": 5,
+          "relevant_count": 5,
+          "precision": 1.0,
+          "avg_keyword_matches": 2.6
+        },
+        {
+          "query": "How does gradient descent work?",
+          "retrieved_count": 5,
+          "relevant_count": 5,
+          "precision": 1.0,
+          "avg_keyword_matches": 2.8
+        },
+        {
+          "query": "What is object-oriented programming?",
+          "retrieved_count": 5,
+          "relevant_count": 1,
+          "precision": 0.2,
+          "avg_keyword_matches": 0.4
+        },
+        {
+          "query": "What are sorting algorithms?",
+          "retrieved_count": 5,
+          "relevant_count": 5,
+          "precision": 1.0,
+          "avg_keyword_matches": 2.0
+        }
+      ],
+      "overall_metrics": {
+        "total_queries": 5,
+        "total_retrieved": 25,
+        "total_relevant": 21,
+        "overall_precision": 0.84,
+        "avg_keyword_score": 2.3600000000000003
+      },
+      "combined_score": 1.296
+    },
+    {
+      "name": "Semantic Search (k=10)",
+      "k": 10,
+      "search_type": "similarity",
+      "query_results": [
+        {
+          "query": "What is the Floyd-Warshall algorithm?",
+          "retrieved_count": 10,
+          "relevant_count": 10,
+          "precision": 1.0,
+          "avg_keyword_matches": 3.4
+        },
+        {
+          "query": "Explain dynamic programming",
+          "retrieved_count": 10,
+          "relevant_count": 10,
+          "precision": 1.0,
+          "avg_keyword_matches": 2.6
+        },
+        {
+          "query": "How does gradient descent work?",
+          "retrieved_count": 10,
+          "relevant_count": 10,
+          "precision": 1.0,
+          "avg_keyword_matches": 2.6
+        },
+        {
+          "query": "What is object-oriented programming?",
+          "retrieved_count": 10,
+          "relevant_count": 2,
+          "precision": 0.2,
+          "avg_keyword_matches": 0.3
+        },
+        {
+          "query": "What are sorting algorithms?",
+          "retrieved_count": 10,
+          "relevant_count": 10,
+          "precision": 1.0,
+          "avg_keyword_matches": 1.9
+        }
+      ],
+      "overall_metrics": {
+        "total_queries": 5,
+        "total_retrieved": 50,
+        "total_relevant": 42,
+        "overall_precision": 0.84,
+        "avg_keyword_score": 2.16
+      },
+      "combined_score": 1.236
+    },
+    {
+      "name": "MMR Search (k=5)",
+      "k": 5,
+      "search_type": "mmr",
+      "query_results": [
+        {
+          "query": "What is the Floyd-Warshall algorithm?",
+          "retrieved_count": 5,
+          "relevant_count": 5,
+          "precision": 1.0,
+          "avg_keyword_matches": 2.6
+        },
+        {
+          "query": "Explain dynamic programming",
+          "retrieved_count": 5,
+          "relevant_count": 5,
+          "precision": 1.0,
+          "avg_keyword_matches": 2.4
+        },
+        {
+          "query": "How does gradient descent work?",
+          "retrieved_count": 5,
+          "relevant_count": 5,
+          "precision": 1.0,
+          "avg_keyword_matches": 2.4
+        },
+        {
+          "query": "What is object-oriented programming?",
+          "retrieved_count": 5,
+          "relevant_count": 1,
+          "precision": 0.2,
+          "avg_keyword_matches": 0.4
+        },
+        {
+          "query": "What are sorting algorithms?",
+          "retrieved_count": 5,
+          "relevant_count": 5,
+          "precision": 1.0,
+          "avg_keyword_matches": 1.8
+        }
+      ],
+      "overall_metrics": {
+        "total_queries": 5,
+        "total_retrieved": 25,
+        "total_relevant": 21,
+        "overall_precision": 0.84,
+        "avg_keyword_score": 1.92
+      },
+      "combined_score": 1.164
+    }
+  ],
+  "best_approach": "Semantic Search (k=3)",
+  "best_score": 1.3666666666666667
+}

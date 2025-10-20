@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+*.md
+!requirements.txt
+
+# Data (will be mounted as volumes)
+chroma_db/
+feedback_data.json
+*.json
+!requirements.txt
+
+# Logs
+*.log
+logs/
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Evaluation results (not needed in container)
+*_results.json
+retrieval_evaluation.py
+llm_evaluation.py
+
+# Misc
+.env.example
+test_*.py
+

@@ -1,0 +1,63 @@
+{
+  "feedback": [
+    {
+      "timestamp": "2025-10-20T10:46:12.971650",
+      "question": "what is time complexity?",
+      "answer_preview": "An error occurred while processing your question: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/ge...",
+      "feedback": "positive",
+      "sources_count": 0,
+      "comment": null,
+      "answer_length": 84
+    }
+  ],
+  "interactions": [
+    {
+      "timestamp": "2025-10-20T10:04:32.172870",
+      "question": "what is floyd warshall algorithm is  , when its used and why its used?",
+      "question_length": 14,
+      "answer_length": 894,
+      "sources_count": 3,
+      "response_time_seconds": 31.10268211364746
+    },
+    {
+      "timestamp": "2025-10-20T10:05:17.432828",
+      "question": "what is floyd warshall algorithm is  , when its used and why its used?",
+      "question_length": 14,
+      "answer_length": 882,
+      "sources_count": 3,
+      "response_time_seconds": 33.43599772453308
+    },
+    {
+      "timestamp": "2025-10-20T10:05:57.370883",
+      "question": "what is floyd warshall algorithm is  , when its used and why its used?",
+      "question_length": 14,
+      "answer_length": 911,
+      "sources_count": 3,
+      "response_time_seconds": 33.94946527481079
+    },
+    {
+      "timestamp": "2025-10-20T10:18:29.798198",
+      "question": "what is djikshtra's algorithm ? ",
+      "question_length": 5,
+      "answer_length": 641,
+      "sources_count": 3,
+      "response_time_seconds": 286.5926125049591
+    },
+    {
+      "timestamp": "2025-10-20T10:29:34.995733",
+      "question": "what is Binary search tree?",
+      "question_length": 5,
+      "answer_length": 84,
+      "sources_count": 0,
+      "response_time_seconds": 308.96156311035156
+    },
+    {
+      "timestamp": "2025-10-20T10:45:32.245480",
+      "question": "what is time complexity?",
+      "question_length": 4,
+      "answer_length": 84,
+      "sources_count": 0,
+      "response_time_seconds": 309.34930300712585
+    }
+  ]
+}
