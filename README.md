@@ -2,32 +2,6 @@
 
 An end-to-end RAG (Retrieval-Augmented Generation) application for querying technical documents and textbooks. Built with Google Gemini, LangChain, ChromaDB, and Streamlit for the **DataTalksClub LLM Zoomcamp**.
 
-## 📸 Screenshots
-
-### Main Q&A Interface
-![Q&A System](images/Screenshot%20from%202025-10-20%2009-22-39.png)
-*Ask questions and get AI-powered answers with source citations*
-
-### Answer with Sources
-![Answer Display](images/Screenshot%20from%202025-10-20%2009-23-01.png)
-*Detailed answers with expandable source previews and feedback buttons*
-
-### Monitoring Dashboard
-![Dashboard Overview](images/Screenshot%20from%202025-10-20%2009-25-04.png)
-*Real-time analytics with 7 interactive charts*
-
-### Performance Metrics
-![Performance Charts](images/Screenshot%20from%202025-10-20%2009-27-55.png)
-*Response times, query volume, and activity patterns*
-
-### Feedback Analytics
-![Feedback Analysis](images/Screenshot%20from%202025-10-20%2009-46-42.png)
-*User feedback distribution and trends*
-
-### System Initialization
-![System Status](images/Screenshot%20from%202025-10-20%2011-16-20.png)
-*Auto-initialization with document processing status*
-
 ## 🎯 Problem Description
 
 Technical professionals and students struggle with information overload when searching through hundreds of pages of documentation and textbooks. **DocuMind** solves this by:
@@ -278,5 +252,21 @@ rag_project/
 - FastAPI REST API
 - Multi-language document support
 - Conversational memory for follow-up questions
+
+---
+
+## 📸 Screenshots
+
+![Screenshot 1](images/Screenshot%20from%202025-10-20%2009-22-39.png)
+
+![Screenshot 2](images/Screenshot%20from%202025-10-20%2009-23-01.png)
+
+![Screenshot 3](images/Screenshot%20from%202025-10-20%2009-25-04.png)
+
+![Screenshot 4](images/Screenshot%20from%202025-10-20%2009-27-55.png)
+
+![Screenshot 5](images/Screenshot%20from%202025-10-20%2009-46-42.png)
+
+![Screenshot 6](images/Screenshot%20from%202025-10-20%2011-16-20.png)
 
 ---
