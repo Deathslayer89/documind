@@ -1,6 +1,6 @@
 # 📚 DocuMind: Intelligent Document Q&A System
 
-An end-to-end RAG (Retrieval-Augmented Generation) application for querying technical documents and textbooks. Built with Google Gemini, LangChain, ChromaDB, and Streamlit for the **DataTalksClub LLM Zoomcamp**.
+An end-to-end RAG (Retrieval-Augmented Generation) application for querying technical documents and textbooks. Built with Google Gemini, LangChain, Qdrant, and Streamlit for the **DataTalksClub LLM Zoomcamp**.
 
 ## 🎯 Problem Description
 
@@ -13,11 +13,11 @@ Technical professionals and students struggle with information overload when sea
 
 - 🔍 **Intelligent Retrieval**: Semantic search using Google's text-embedding-004 model
 - 🤖 **AI Answers**: Google Gemini Pro generates comprehensive responses with source attribution
-- 📊 **Advanced Monitoring**: 
-  - **LangSmith Tracing**: Real-time LLM call tracking, token usage, latency analysis
-  - **Grafana Dashboards**: Visual metrics for queries, response times, feedback
-  - **ChromaDB Admin UI**: Vector database inspection and management
-  - **Integrated Dashboard**: 7 Plotly charts for user feedback and performance
+- 📊 **Production-Grade Monitoring & Observability**: 
+  - **LangSmith Tracing**: Complete LLM call tracking with token costs, latency, debugging
+  - **Qdrant 3D Vector Visualizations**: Interactive t-SNE/UMAP plots of document embeddings
+  - **Grafana + Prometheus**: Professional time-series dashboards for system metrics
+  - **Integrated Analytics**: 7 Plotly charts for user feedback and performance trends
 - 🎨 **Modern UI**: Streamlit interface with Q&A and dashboard tabs
 - 🐳 **Docker Ready**: Full containerization with docker-compose (4 services)
 - 📈 **Optimized**: Evaluated 4 retrieval strategies and 4 prompt templates to select best approaches
@@ -26,20 +26,20 @@ Technical professionals and students struggle with information overload when sea
 
 ```
 ┌─────────────┐
-│  Streamlit  │  User Interface
+│  Streamlit  │  User Interface + Integrated Dashboard
 └──────┬──────┘
        │
        ▼
 ┌─────────────┐
-│  LangChain  │  RAG Pipeline
+│  LangChain  │  RAG Pipeline (with LangSmith tracing)
 └──────┬──────┘
        │
-   ┌───┴───┐
-   ▼       ▼
-┌────────┐ ┌──────┐
-│ChromaDB│ │Gemini│
-│ Vector │ │ LLM  │
-└────────┘ └──────┘
+   ┌───┴────┬─────────────┐
+   ▼        ▼             ▼
+┌────────┐ ┌──────┐  ┌──────────┐
+│ Qdrant │ │Gemini│  │Prometheus│
+│3D Viz  │ │ LLM  │  │+ Grafana │
+└────────┘ └──────┘  └──────────┘
 ```
 
 ## 🚀 Quick Start
@@ -91,8 +91,8 @@ docker-compose up -d
 
 # 3. Access services:
 # Main App:        http://localhost:8501
+# Qdrant UI:       http://localhost:6333/dashboard  (3D visualizations!)
 # Grafana:         http://localhost:3000
-# ChromaDB UI:     http://localhost:8000
 # Prometheus:      http://localhost:9090
 # LangSmith:       https://smith.langchain.com
 
@@ -108,9 +108,9 @@ docker-compose down -v
 
 **Docker Stack (4 Services):**
 - ✅ **Main RAG App**: Streamlit UI on port 8501
-- ✅ **Grafana**: Metrics visualization on port 3000
-- ✅ **Prometheus**: Metrics collection on port 9090
-- ✅ **ChromaDB Admin**: Vector DB UI on port 8000
+- ✅ **Qdrant**: Vector database with 3D visualization UI on port 6333
+- ✅ **Grafana**: Metrics dashboards on port 3000
+- ✅ **Prometheus**: Time-series metrics collection on port 9090
 - ✅ Named volumes for data persistence
 - ✅ Resource limits (2 CPU cores, 4GB RAM)
 - ✅ Health checks and security (non-root user)
@@ -134,38 +134,20 @@ View traces at: https://smith.langchain.com/projects
 
 **2. Monitoring Stack with Docker (Recommended)**
 
-Run Grafana and Prometheus for monitoring:
+Run full monitoring stack (Qdrant, Grafana, Prometheus):
 
 ```bash
-# Start monitoring stack (Grafana + Prometheus + ChromaDB Server)
+# Start monitoring stack
 docker-compose -f docker-compose-monitoring.yml up -d
 
 # Access services:
+# Qdrant UI:          http://localhost:6333/dashboard (3D viz!)
 # Grafana:            http://localhost:3000 (admin/admin)
 # Prometheus:         http://localhost:9090
-# ChromaDB Server:    http://localhost:8000
 
 # Stop monitoring stack
 docker-compose -f docker-compose-monitoring.yml down
 ```
-
-**3. ChromaDB Viewer (Custom UI)**
-
-For inspecting your vector database:
-
-```bash
-# Run alongside your app (separate terminal)
-streamlit run chromadb_viewer.py --server.port 8001
-```
-
-Access at: http://localhost:8001
-
-**Features:**
-- 🔍 Search vector database with similarity scores
-- 📄 Browse documents with full metadata
-- 📊 Collection statistics and analytics
-- 📥 Export data as CSV
-- 🗂️ Multi-collection support
 
 ## 📖 Usage
 
@@ -195,10 +177,10 @@ Access at: http://localhost:8001
 # Add files to data/ folder
 cp new_document.pdf data/
 
-# Remove old vector store
-rm -rf chroma_db
+# Delete Qdrant collection to force rebuild
+curl -X DELETE http://localhost:6333/collections/cs_textbooks
 
-# Restart app (it will auto-reinitialize)
+# Restart app (it will auto-reinitialize with new documents)
 streamlit run app.py
 ```
 
@@ -255,68 +237,120 @@ Tested 4 prompt templates on 5 queries (including unknown topics):
 This project implements comprehensive monitoring at multiple levels:
 
 ```
-┌─────────────────────────────────────────────┐
-│  1. LangSmith → LLM call tracing            │ (Primary)
-│  2. Grafana → System metrics visualization  │
-│  3. ChromaDB Admin → Vector DB inspection   │
-│  4. Streamlit → User feedback analytics     │
-└─────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────┐
+│  1. LangSmith → LLM tracing (token costs, debug) │ ⭐ Primary
+│  2. Qdrant UI → 3D vector visualization (t-SNE)  │ 
+│  3. Grafana → Time-series dashboards             │
+│  4. Prometheus → Metrics collection & queries    │
+│  5. Streamlit → User feedback analytics          │
+└──────────────────────────────────────────────────┘
 ```
 
 ### 1. LangSmith Tracing (Primary LLM Monitoring) ⭐
 
-**Production-grade LLM observability** - the most important monitoring tool for RAG systems:
+**Production-grade LLM observability** - the most critical monitoring tool for RAG systems:
 
-**What it monitors:**
-- 🔍 **Request Tracing**: Every LLM call with full inputs/outputs
-- ⏱️ **Latency Breakdown**: Embedding → Retrieval → Generation timing
-- 💰 **Cost Monitoring**: Token usage (input/output) and API costs per query
-- 🐛 **Debugging**: Detailed chain execution with intermediate steps
-- 📈 **Analytics**: Query patterns, failure rates, performance trends
-- 🧪 **A/B Testing**: Compare different prompts and retrieval strategies
+**What it tracks:**
+- 🔍 **Full Request Tracing**: Every LLM call with complete inputs/outputs/intermediate steps
+- ⏱️ **Latency Breakdown**: Embedding (0.2s) → Retrieval (0.1s) → Generation (2.5s) timing
+- 💰 **Cost Monitoring**: Token usage (input: 3.2K, output: 450) and real-time API costs
+- 🐛 **Debugging**: Step-by-step chain execution showing retrieval → context → final answer
+- 📈 **Analytics Dashboard**: Query patterns, failure rates, performance trends, token efficiency
+- 🧪 **A/B Testing**: Compare different prompts, embeddings, and retrieval strategies side-by-side
+- 🔔 **Alerts**: Set up notifications for errors, latency spikes, or cost thresholds
 
 **How to enable:**
 ```bash
-# Add to .env
+# Add to .env file
 LANGCHAIN_TRACING_V2=true
-LANGCHAIN_API_KEY=ls__your_api_key_here
+LANGCHAIN_API_KEY=ls__your_api_key_here  # Get from smith.langchain.com
 LANGCHAIN_PROJECT=documind-rag
 ```
 
 **Access:** https://smith.langchain.com/projects
 
-**Why it's essential:** Unlike basic metrics, LangSmith shows *why* your RAG system behaves the way it does - what context was retrieved, how the LLM interpreted it, and where bottlenecks occur.
+**Why it's essential:** Unlike basic metrics, LangSmith shows *why* your RAG system behaves the way it does - what context was retrieved, how the LLM interpreted it, where bottlenecks occur, and exactly which prompts/strategies perform best. This is the #1 tool for debugging and optimizing RAG applications.
 
-### 2. Grafana Dashboards (System Metrics)
+### 2. Qdrant 3D Vector Visualizations 🎨
 
-Visual monitoring with Prometheus + Grafana stack (auto-configured in Docker):
+**Interactive vector space exploration** with built-in Qdrant UI:
+
+**Features:**
+- **3D Scatter Plots**: Visualize 3,801 document embeddings using t-SNE or UMAP dimensionality reduction
+- **Color Coding**: Color points by source document, chunk position, or similarity clusters
+- **Interactive**: Rotate, zoom, pan through your vector space to see document relationships
+- **Filtering**: Focus on specific documents, topics, or similarity ranges
+- **Hover Tooltips**: See actual document text and metadata on mouseover
+
+**Access:** http://localhost:6333/dashboard → Collections → `cs_textbooks` → **Visualize tab**
+
+**Example visualizations:**
+
+```json
+// View all vectors colored by source document
+{
+  "limit": 3801,
+  "color_by": { "payload": "source" },
+  "algorithm": "UMAP"
+}
+
+// See document structure (beginning vs end chunks)
+{
+  "limit": 2000,
+  "color_by": { "payload": "chunk_id" },
+  "algorithm": "TSNE"
+}
+
+// Filter to specific document only
+{
+  "limit": 1000,
+  "filter": {
+    "must": [
+      { "key": "source", "match": { "text": "Algorithm" } }
+    ]
+  },
+  "algorithm": "UMAP"
+}
+```
+
+**Use case:** Understand document clustering, verify embedding quality, identify semantic gaps, create impressive visualizations for presentations.
+
+### 3. Grafana + Prometheus Dashboards (System Metrics)
+
+**Professional time-series monitoring** with Prometheus + Grafana stack (auto-configured in Docker):
 
 **Pre-built dashboard includes:**
-- Query rate and volume trends
-- Response time percentiles (p50, p95)
-- Feedback distribution (positive/negative)
-- Sources retrieved per query
-- System health metrics
+- Query rate and volume trends over time
+- Response time percentiles (p50, p95, p99)
+- Memory and CPU usage graphs
+- Qdrant collection statistics
+- System health indicators
 
-**Access:** http://localhost:3000 (default: admin/admin)
+**Access:**
+- **Grafana**: http://localhost:3000 (login: admin/admin)
+- **Prometheus**: http://localhost:9090
 
-**Use case:** High-level system health and performance trends over time.
+**Useful Prometheus Queries to Try:**
 
-### 3. ChromaDB Viewer UI (Vector Database)
+| Query | Description | Panel Type |
+|-------|-------------|------------|
+| `process_resident_memory_bytes / 1024 / 1024` | Memory usage in MB | Time Series |
+| `rate(process_cpu_seconds_total[5m]) * 100` | CPU usage % | Time Series |
+| `go_goroutines` | Active threads | Gauge |
+| `rate(qdrant_operations_total[1m])` | Qdrant ops/sec | Time Series |
+| `histogram_quantile(0.95, qdrant_search_duration_seconds)` | Search latency p95 | Time Series |
 
-Custom Streamlit interface to inspect and manage your vector embeddings:
-- View collections and document counts (15,354 chunks)
-- **Search with similarity scores**: Query the vector DB directly
-- Browse documents with metadata (source, page, content)
-- View statistics: document lengths, source distribution
-- Export data as CSV for analysis
-- Debug retrieval issues (why certain docs are/aren't retrieved)
+**Creating Custom Panels in Grafana:**
+1. Go to http://localhost:3000 → Dashboards → New → Add visualization
+2. Select "Prometheus" as data source
+3. Enter any query from the table above
+4. Set panel title, unit, and visualization type
+5. Click "Apply" and "Save dashboard"
 
-**Access:** http://localhost:8001 (run `streamlit run chromadb_viewer.py --server.port 8001`)
+**Use case:** Monitor system health, track performance trends, identify bottlenecks, create professional dashboards for stakeholders.
 
-**Use case:** Debug retrieval problems, understand document distribution, verify embeddings, test queries.
 
-### 4. Integrated Streamlit Dashboard
+### 4. Integrated Streamlit Analytics Dashboard
 
 Built-in analytics with 7 interactive Plotly charts:
 
@@ -342,43 +376,46 @@ Built-in analytics with 7 interactive Plotly charts:
 ```
 rag_project/
 ├── app.py                              # Streamlit UI (integrated dashboard)
-├── rag_pipeline.py                     # Core RAG implementation
-├── document_processor.py               # PDF/text processing
+├── rag_pipeline.py                     # Core RAG implementation (Qdrant)
+├── document_processor.py               # PDF/text processing (PyMuPDF)
 ├── feedback_storage.py                 # User feedback & interaction logging
 ├── retrieval_evaluation.py             # Retrieval evaluation script
 ├── llm_evaluation.py                   # LLM prompt evaluation script
 ├── requirements.txt                    # Python dependencies
 ├── .env                                # Environment configuration
 ├── Dockerfile                          # Container definition
-├── docker-compose.yml                  # Container orchestration (4 services)
+├── docker-compose.yml                  # Main stack: app + Qdrant + Grafana + Prometheus
+├── docker-compose-monitoring.yml       # Standalone monitoring stack
 ├── prometheus.yml                      # Prometheus configuration
 ├── grafana-datasources.yml             # Grafana data sources
 ├── grafana-dashboards.yml              # Grafana dashboard provisioning
 ├── grafana-dashboard.json              # Pre-built Grafana dashboard
 ├── data/                               # Document storage (your PDFs/TXTs)
-├── chroma_db/                          # Vector database (auto-generated)
 └── feedback_data.json                  # Analytics data (auto-generated)
 ```
 
 ## 🛠️ Technologies
 
 - **LLM**: Google Gemini 2.5 Pro
-- **Embeddings**: text-embedding-004
-- **Vector DB**: ChromaDB (with Admin UI)
+- **Embeddings**: Google text-embedding-004 (768 dimensions)
+- **Vector DB**: Qdrant (with 3D visualization UI)
 - **Framework**: LangChain (with LangSmith tracing)
 - **Interface**: Streamlit
-- **Monitoring**: Prometheus + Grafana + LangSmith
+- **Monitoring**: LangSmith + Prometheus + Grafana
 - **Containerization**: Docker & Docker Compose
-- **Analytics**: Plotly for visualizations
+- **Analytics**: Plotly for charts, t-SNE/UMAP for embeddings
+- **PDF Processing**: PyMuPDF (100x faster than PyPDF2)
 - **Language**: Python 3.12
 
 ## 📊 System Performance
 
-- **Processing Speed**: ~1,400 chunks/minute
-- **Retrieval Speed**: < 1 second
+- **PDF Processing**: 2.6 seconds for 1,312 pages (PyMuPDF)
+- **Embedding Speed**: ~500 chunks/minute (Google batch API)
+- **Retrieval Speed**: < 100ms (Qdrant vector search)
+- **LLM Response**: 2-5 seconds (Gemini Pro)
 - **Batch Capacity**: 5,000 docs/batch, 15,000+ total
 - **Formats**: PDF, TXT
-- **Sample Dataset**: 10+ technical books, 15,354 chunks
+- **Sample Dataset**: Technical textbooks, 3,801 chunks, 768-dim vectors
 
 ## 🔮 Future Enhancements
 
@@ -406,5 +443,14 @@ rag_project/
 ![Screenshot 5](images/Screenshot%20from%202025-10-20%2009-46-42.png)
 
 ![Screenshot 6](images/Screenshot%20from%202025-10-20%2011-16-20.png)
+
+![Qdrant 3D Visualization](images/Screenshot%20from%202025-10-21%2000-24-48.png)
+*Qdrant 3D Vector Space: Interactive UMAP visualization of 3,801 document embeddings colored by source*
+
+![Grafana Dashboard](images/Screenshot%20from%202025-10-21%2000-33-23.png)
+*Grafana + Prometheus: System metrics dashboard with CPU, memory, and Qdrant performance graphs*
+
+![LangSmith Tracing](images/Screenshot%20from%202025-10-21%2000-40-52.png)
+*LangSmith LLM Tracing: Complete request traces showing token usage, latency breakdown, and debugging info*
 
 ---
