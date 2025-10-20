@@ -551,10 +551,10 @@ def show_monitoring_dashboard():
     col1, col2 = st.columns(2)
     
     with col1:
-        st.plotly_chart(create_feedback_chart(feedback_df), width='stretch')
+        st.plotly_chart(create_feedback_chart(feedback_df), use_container_width=True)
     
     with col2:
-        st.plotly_chart(create_feedback_timeline(feedback_df), width='stretch')
+        st.plotly_chart(create_feedback_timeline(feedback_df), use_container_width=True)
     
     st.markdown("---")
     
@@ -563,10 +563,10 @@ def show_monitoring_dashboard():
     col1, col2 = st.columns(2)
     
     with col1:
-        st.plotly_chart(create_response_time_chart(interactions_df), width='stretch')
+        st.plotly_chart(create_response_time_chart(interactions_df), use_container_width=True)
     
     with col2:
-        st.plotly_chart(create_query_volume_chart(interactions_df), width='stretch')
+        st.plotly_chart(create_query_volume_chart(interactions_df), use_container_width=True)
     
     st.markdown("---")
     
@@ -575,16 +575,16 @@ def show_monitoring_dashboard():
     col1, col2 = st.columns(2)
     
     with col1:
-        st.plotly_chart(create_sources_chart(interactions_df), width='stretch')
+        st.plotly_chart(create_sources_chart(interactions_df), use_container_width=True)
     
     with col2:
-        st.plotly_chart(create_answer_length_chart(interactions_df), width='stretch')
+        st.plotly_chart(create_answer_length_chart(interactions_df), use_container_width=True)
     
     st.markdown("---")
     
     # Chart 7: Activity Pattern
     st.markdown("### 🕐 Activity Patterns")
-    st.plotly_chart(create_hourly_activity_chart(interactions_df), width='stretch')
+    st.plotly_chart(create_hourly_activity_chart(interactions_df), use_container_width=True)
     
     st.markdown("---")
     
@@ -597,7 +597,7 @@ def show_monitoring_dashboard():
         recent_feedback['feedback'] = recent_feedback['feedback'].map({'positive': '👍 Positive', 'negative': '👎 Negative'})
         recent_feedback.columns = ['Time', 'Question', 'Feedback', 'Sources', 'Answer Length']
         
-        st.dataframe(recent_feedback, width='stretch', hide_index=True)
+        st.dataframe(recent_feedback, use_container_width=True, hide_index=True)
     else:
         st.info("No feedback data available yet. Users need to rate answers in the Q&A tab.")
     
