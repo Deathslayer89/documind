@@ -1,0 +1,126 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "documind-rag",
+    "title": "DocuMind RAG System",
+    "tags": ["rag", "llm", "monitoring"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "10s",
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "Query Rate",
+        "targets": [
+          {
+            "expr": "rate(documind_queries_total[5m])",
+            "legendFormat": "Queries/sec"
+          }
+        ],
+        "yaxes": [
+          { "format": "short", "label": "Queries/sec" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 2,
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "Response Time",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(documind_response_time_seconds_bucket[5m]))",
+            "legendFormat": "95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.50, rate(documind_response_time_seconds_bucket[5m]))",
+            "legendFormat": "50th percentile"
+          }
+        ],
+        "yaxes": [
+          { "format": "s", "label": "Response Time" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 3,
+        "gridPos": { "x": 0, "y": 8, "w": 8, "h": 8 },
+        "type": "stat",
+        "title": "Total Queries",
+        "targets": [
+          {
+            "expr": "documind_queries_total"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "gridPos": { "x": 8, "y": 8, "w": 8, "h": 8 },
+        "type": "stat",
+        "title": "Positive Feedback %",
+        "targets": [
+          {
+            "expr": "(documind_feedback_positive / (documind_feedback_positive + documind_feedback_negative)) * 100"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "id": 5,
+        "gridPos": { "x": 16, "y": 8, "w": 8, "h": 8 },
+        "type": "stat",
+        "title": "Avg Response Time",
+        "targets": [
+          {
+            "expr": "rate(documind_response_time_seconds_sum[5m]) / rate(documind_response_time_seconds_count[5m])"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        }
+      },
+      {
+        "id": 6,
+        "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 },
+        "type": "piechart",
+        "title": "Feedback Distribution",
+        "targets": [
+          {
+            "expr": "documind_feedback_positive",
+            "legendFormat": "Positive"
+          },
+          {
+            "expr": "documind_feedback_negative",
+            "legendFormat": "Negative"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "gridPos": { "x": 12, "y": 16, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "Sources Retrieved per Query",
+        "targets": [
+          {
+            "expr": "documind_sources_retrieved",
+            "legendFormat": "Sources"
+          }
+        ],
+        "yaxes": [
+          { "format": "short", "label": "Count" },
+          { "format": "short" }
+        ]
+      }
+    ]
+  }
+}
+

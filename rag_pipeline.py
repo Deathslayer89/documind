@@ -1,18 +1,19 @@
 import os
 import google.generativeai as genai
-import chromadb
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, VectorParams, PointStruct
 from typing import List, Dict, Tuple, Any
 from langchain.schema import Document
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
-from langchain.vectorstores import Chroma
+from langchain_community.vectorstores import Qdrant
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
 from document_processor import DocumentProcessor
 
 class RAGPipeline:
-    def __init__(self, google_api_key: str, persist_directory: str = "./chroma_db", collection_name: str = "cs_textbooks"):
+    def __init__(self, google_api_key: str, qdrant_url: str = "http://localhost:6333", collection_name: str = "cs_textbooks"):
         self.google_api_key = google_api_key
-        self.persist_directory = persist_directory
+        self.qdrant_url = qdrant_url
         self.collection_name = collection_name
 
         # Initialize Google AI
@@ -29,6 +30,9 @@ class RAGPipeline:
             google_api_key=google_api_key
         )
 
+        # Initialize Qdrant client
+        self.qdrant_client = QdrantClient(url=qdrant_url)
+
         # Initialize document processor
         self.doc_processor = DocumentProcessor()
 
@@ -36,65 +40,48 @@ class RAGPipeline:
         self.vector_store = None
         self.qa_chain = None
 
-        # Create persist directory if it doesn't exist
-        os.makedirs(persist_directory, exist_ok=True)
-
-    def create_vector_store(self, documents: List[Document]) -> Chroma:
-        """Create and populate a Chroma vector store from documents with batching."""
+    def create_vector_store(self, documents: List[Document]) -> Qdrant:
+        """Create and populate a Qdrant vector store from documents with batching."""
         if not documents:
             raise ValueError("No documents provided to create vector store")
 
-        print(f"Creating vector store with {len(documents)} document chunks...")
+        print(f"Creating Qdrant vector store with {len(documents)} document chunks...")
         
         # Batch size limit - Google Embedding API has a max batch size
         batch_size = 5000  # Stay under the 5461 limit with buffer
         
-        if len(documents) <= batch_size:
-            # Small enough to process in one go
-            vector_store = Chroma.from_documents(
-                documents=documents,
-                embedding=self.embeddings,
-                persist_directory=self.persist_directory,
-                collection_name=self.collection_name
-            )
-        else:
-            # Process in batches to avoid API limits
-            total_batches = (len(documents) + batch_size - 1) // batch_size
-            print(f"Processing {len(documents)} documents in {total_batches} batches of {batch_size}...")
-            
-            # Create initial vector store with first batch
-            first_batch = documents[:batch_size]
-            vector_store = Chroma.from_documents(
-                documents=first_batch,
-                embedding=self.embeddings,
-                persist_directory=self.persist_directory,
-                collection_name=self.collection_name
-            )
-            print(f"✓ Processed batch 1/{total_batches}")
-            
-            # Add remaining documents in batches
-            for i in range(batch_size, len(documents), batch_size):
-                batch = documents[i:i + batch_size]
-                vector_store.add_documents(batch)
-                batch_num = (i // batch_size) + 1
-                print(f"✓ Processed batch {batch_num}/{total_batches}")
+        # Create Qdrant vector store
+        vector_store = Qdrant.from_documents(
+            documents,
+            self.embeddings,
+            url=self.qdrant_url,
+            prefer_grpc=False,
+            collection_name=self.collection_name,
+        )
         
-        # Persist the vector store
-        vector_store.persist()
-        print(f"✅ Vector store created and persisted to {self.persist_directory}")
+        print(f"✅ Qdrant vector store created with collection '{self.collection_name}'")
+        print(f"   Access Qdrant UI at: {self.qdrant_url.replace('6333', '6333')}/dashboard")
 
         return vector_store
 
-    def load_vector_store(self) -> Chroma:
-        """Load an existing vector store from disk."""
+    def load_vector_store(self) -> Qdrant:
+        """Load an existing Qdrant vector store."""
         try:
-            vector_store = Chroma(
-                persist_directory=self.persist_directory,
-                embedding_function=self.embeddings,
-                collection_name=self.collection_name
-            )
-            print(f"Loaded existing vector store from {self.persist_directory}")
-            return vector_store
+            # Check if collection exists
+            collections = self.qdrant_client.get_collections().collections
+            collection_names = [col.name for col in collections]
+            
+            if self.collection_name in collection_names:
+                vector_store = Qdrant(
+                    client=self.qdrant_client,
+                    collection_name=self.collection_name,
+                    embeddings=self.embeddings
+                )
+                print(f"✅ Loaded existing Qdrant collection '{self.collection_name}'")
+                return vector_store
+            else:
+                print(f"Collection '{self.collection_name}' does not exist in Qdrant")
+                return None
         except Exception as e:
             print(f"Could not load existing vector store: {e}")
             return None
@@ -104,6 +91,12 @@ class RAGPipeline:
         if force_recreate:
             if documents is None:
                 raise ValueError("Documents must be provided to recreate vector store")
+            # Delete existing collection if force recreate
+            try:
+                self.qdrant_client.delete_collection(collection_name=self.collection_name)
+                print(f"Deleted existing collection '{self.collection_name}'")
+            except:
+                pass
             self.vector_store = self.create_vector_store(documents)
             return True
         else:
@@ -113,14 +106,14 @@ class RAGPipeline:
             # Check if vector store is empty
             if self.vector_store is not None:
                 try:
-                    collection = self.vector_store._collection
-                    if collection.count() == 0:
+                    collection_info = self.qdrant_client.get_collection(self.collection_name)
+                    if collection_info.points_count == 0:
                         self.vector_store = None  # Force recreation if empty
                 except:
                     pass
 
-            if self.vector_store is None or documents:
-                # Create new vector store if loading failed or new documents provided
+            if self.vector_store is None:
+                # Create new vector store if loading failed
                 if documents is None:
                     # Try to process documents from data directory
                     documents = self.doc_processor.process_directory("data")
@@ -215,8 +208,7 @@ Expert Answer:"""
         else:
             # Add documents to existing store
             self.vector_store.add_documents(documents)
-            self.vector_store.persist()
-            print(f"Added {len(documents)} new document chunks to vector store")
+            print(f"Added {len(documents)} new document chunks to Qdrant")
 
     def get_vector_store_stats(self) -> Dict[str, Any]:
         """Get statistics about the current vector store."""
@@ -224,15 +216,15 @@ Expert Answer:"""
             return {"status": "No vector store initialized"}
 
         try:
-            # Get collection info
-            collection = self.vector_store._collection
-            count = collection.count()
+            # Get collection info from Qdrant
+            collection_info = self.qdrant_client.get_collection(self.collection_name)
 
             return {
-                "status": "Vector store active",
-                "total_documents": count,
+                "status": "Qdrant vector store active",
+                "total_documents": collection_info.points_count,
                 "collection_name": self.collection_name,
-                "persist_directory": self.persist_directory
+                "qdrant_url": self.qdrant_url,
+                "vectors_count": collection_info.vectors_count
             }
         except Exception as e:
             return {"status": f"Error getting stats: {e}"}

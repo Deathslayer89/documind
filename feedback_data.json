@@ -8,6 +8,24 @@
       "sources_count": 0,
       "comment": null,
       "answer_length": 84
+    },
+    {
+      "timestamp": "2025-10-21T00:16:08.049229",
+      "question": "what is time complexity?",
+      "answer_preview": "Based on the provided context, here is a comprehensive technical answer about time complexity.\n\n### What is Time Complexity?\n\nBased on the context, **time complexity** is a high-level, abstract measur...",
+      "feedback": "positive",
+      "sources_count": 3,
+      "comment": null,
+      "answer_length": 722
+    },
+    {
+      "timestamp": "2025-10-21T00:27:51.163175",
+      "question": "can you tell me what is spring boot is and why its best to create apps in java using it ?",
+      "answer_preview": "Based on the provided context, here is a comprehensive technical answer.\n\n### What is Spring Boot?\n\nAccording to the context, **Spring Boot** is an extension of the **Spring Framework** designed to si...",
+      "feedback": "negative",
+      "sources_count": 3,
+      "comment": null,
+      "answer_length": 613
     }
   ],
   "interactions": [
@@ -58,6 +76,22 @@
       "answer_length": 84,
       "sources_count": 0,
       "response_time_seconds": 309.34930300712585
+    },
+    {
+      "timestamp": "2025-10-21T00:15:36.918121",
+      "question": "what is time complexity?",
+      "question_length": 4,
+      "answer_length": 722,
+      "sources_count": 3,
+      "response_time_seconds": 29.27999234199524
+    },
+    {
+      "timestamp": "2025-10-21T00:27:19.453390",
+      "question": "can you tell me what is spring boot is and why its best to create apps in java using it ?",
+      "question_length": 21,
+      "answer_length": 613,
+      "sources_count": 3,
+      "response_time_seconds": 24.037190914154053
     }
   ]
 }

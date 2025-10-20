@@ -13,9 +13,13 @@ Technical professionals and students struggle with information overload when sea
 
 - 🔍 **Intelligent Retrieval**: Semantic search using Google's text-embedding-004 model
 - 🤖 **AI Answers**: Google Gemini Pro generates comprehensive responses with source attribution
-- 📊 **Monitoring Dashboard**: 7 interactive charts tracking usage, feedback, and performance
+- 📊 **Advanced Monitoring**: 
+  - **LangSmith Tracing**: Real-time LLM call tracking, token usage, latency analysis
+  - **Grafana Dashboards**: Visual metrics for queries, response times, feedback
+  - **ChromaDB Admin UI**: Vector database inspection and management
+  - **Integrated Dashboard**: 7 Plotly charts for user feedback and performance
 - 🎨 **Modern UI**: Streamlit interface with Q&A and dashboard tabs
-- 🐳 **Docker Ready**: Full containerization with docker-compose
+- 🐳 **Docker Ready**: Full containerization with docker-compose (4 services)
 - 📈 **Optimized**: Evaluated 4 retrieval strategies and 4 prompt templates to select best approaches
 
 ## 🏗️ Architecture
@@ -44,17 +48,17 @@ Technical professionals and students struggle with information overload when sea
 
 **Prerequisites:** Python 3.12+ and Google Gemini API Key ([Get one here](https://makersuite.google.com/app/apikey))
 
-```bash
+   ```bash
 # 1. Clone and navigate
 git clone <your-repo-url>
-cd rag_project
+   cd rag_project
 
 # 2. Create virtual environment
 python3 -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 
 # 3. Install dependencies
-pip install -r requirements.txt
+   pip install -r requirements.txt
 
 # 4. Configure environment
 echo "GOOGLE_API_KEY=your_api_key_here" > .env
@@ -64,47 +68,104 @@ mkdir -p data
 # Copy your PDFs/text files to data/ folder
 
 # 6. Run the app
-streamlit run app.py
-```
+   streamlit run app.py
+   ```
 
 Access at http://localhost:8501
 
-### Option 2: Docker Deployment
+### Option 2: Docker Deployment (Full Monitoring Stack)
 
 ```bash
-# 1. Create .env file with your API key
-echo "GOOGLE_API_KEY=your_api_key_here" > .env
+# 1. Create .env file with your API keys
+cat > .env << EOF
+GOOGLE_API_KEY=your_api_key_here
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_API_KEY=your_langsmith_api_key
+LANGCHAIN_PROJECT=documind-rag
+GRAFANA_USER=admin
+GRAFANA_PASSWORD=admin
+EOF
 
-# 2. Build and run
+# 2. Build and run all services
 docker-compose up -d
 
-# 3. Access at http://localhost:8501
+# 3. Access services:
+# Main App:        http://localhost:8501
+# Grafana:         http://localhost:3000
+# ChromaDB UI:     http://localhost:8000
+# Prometheus:      http://localhost:9090
+# LangSmith:       https://smith.langchain.com
 
 # View logs
-docker-compose logs -f
+docker-compose logs -f rag-app
 
-# Stop
+# Stop all services
 docker-compose down
 
 # Full cleanup (removes volumes)
 docker-compose down -v
 ```
 
-**Docker Features:**
-- ✅ Full containerization with data persistence
-- ✅ Named volumes for vector DB and feedback data
+**Docker Stack (4 Services):**
+- ✅ **Main RAG App**: Streamlit UI on port 8501
+- ✅ **Grafana**: Metrics visualization on port 3000
+- ✅ **Prometheus**: Metrics collection on port 9090
+- ✅ **ChromaDB Admin**: Vector DB UI on port 8000
+- ✅ Named volumes for data persistence
 - ✅ Resource limits (2 CPU cores, 4GB RAM)
 - ✅ Health checks and security (non-root user)
 
-### Optional: LangSmith Tracing
+### Option 3: Local Monitoring Stack
 
-For debugging and monitoring, add to `.env`:
+Run monitoring tools locally alongside your main app:
+
+**1. LangSmith Tracing (LLM Monitoring)**
+
 ```bash
+# Add to .env file
 LANGCHAIN_TRACING_V2=true
 LANGCHAIN_API_KEY=your_langsmith_api_key
 LANGCHAIN_PROJECT=documind-rag
+
+# Run your app - tracing is automatic
+streamlit run app.py
 ```
-Get API key from: https://smith.langchain.com/
+View traces at: https://smith.langchain.com/projects
+
+**2. Monitoring Stack with Docker (Recommended)**
+
+Run Grafana and Prometheus for monitoring:
+
+```bash
+# Start monitoring stack (Grafana + Prometheus + ChromaDB Server)
+docker-compose -f docker-compose-monitoring.yml up -d
+
+# Access services:
+# Grafana:            http://localhost:3000 (admin/admin)
+# Prometheus:         http://localhost:9090
+# ChromaDB Server:    http://localhost:8000
+
+# Stop monitoring stack
+docker-compose -f docker-compose-monitoring.yml down
+```
+
+**3. ChromaDB Viewer (Custom UI)**
+
+For inspecting your vector database:
+
+```bash
+# Run alongside your app (separate terminal)
+streamlit run chromadb_viewer.py --server.port 8001
+```
+
+Access at: http://localhost:8001
+
+**Features:**
+- 🔍 Search vector database with similarity scores
+- 📄 Browse documents with full metadata
+- 📊 Collection statistics and analytics
+- 📥 Export data as CSV
+- 🗂️ Multi-collection support
 
 ## 📖 Usage
 
@@ -187,9 +248,77 @@ Tested 4 prompt templates on 5 queries (including unknown topics):
 
 **Scripts**: [`llm_evaluation.py`](llm_evaluation.py) | [`llm_evaluation_results.json`](llm_evaluation_results.json)
 
-### Monitoring Dashboard
+## 📊 Monitoring & Observability
 
-Integrated dashboard with 7 interactive Plotly charts:
+### Overview: 4-Layer Monitoring Stack
+
+This project implements comprehensive monitoring at multiple levels:
+
+```
+┌─────────────────────────────────────────────┐
+│  1. LangSmith → LLM call tracing            │ (Primary)
+│  2. Grafana → System metrics visualization  │
+│  3. ChromaDB Admin → Vector DB inspection   │
+│  4. Streamlit → User feedback analytics     │
+└─────────────────────────────────────────────┘
+```
+
+### 1. LangSmith Tracing (Primary LLM Monitoring) ⭐
+
+**Production-grade LLM observability** - the most important monitoring tool for RAG systems:
+
+**What it monitors:**
+- 🔍 **Request Tracing**: Every LLM call with full inputs/outputs
+- ⏱️ **Latency Breakdown**: Embedding → Retrieval → Generation timing
+- 💰 **Cost Monitoring**: Token usage (input/output) and API costs per query
+- 🐛 **Debugging**: Detailed chain execution with intermediate steps
+- 📈 **Analytics**: Query patterns, failure rates, performance trends
+- 🧪 **A/B Testing**: Compare different prompts and retrieval strategies
+
+**How to enable:**
+```bash
+# Add to .env
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_API_KEY=ls__your_api_key_here
+LANGCHAIN_PROJECT=documind-rag
+```
+
+**Access:** https://smith.langchain.com/projects
+
+**Why it's essential:** Unlike basic metrics, LangSmith shows *why* your RAG system behaves the way it does - what context was retrieved, how the LLM interpreted it, and where bottlenecks occur.
+
+### 2. Grafana Dashboards (System Metrics)
+
+Visual monitoring with Prometheus + Grafana stack (auto-configured in Docker):
+
+**Pre-built dashboard includes:**
+- Query rate and volume trends
+- Response time percentiles (p50, p95)
+- Feedback distribution (positive/negative)
+- Sources retrieved per query
+- System health metrics
+
+**Access:** http://localhost:3000 (default: admin/admin)
+
+**Use case:** High-level system health and performance trends over time.
+
+### 3. ChromaDB Viewer UI (Vector Database)
+
+Custom Streamlit interface to inspect and manage your vector embeddings:
+- View collections and document counts (15,354 chunks)
+- **Search with similarity scores**: Query the vector DB directly
+- Browse documents with metadata (source, page, content)
+- View statistics: document lengths, source distribution
+- Export data as CSV for analysis
+- Debug retrieval issues (why certain docs are/aren't retrieved)
+
+**Access:** http://localhost:8001 (run `streamlit run chromadb_viewer.py --server.port 8001`)
+
+**Use case:** Debug retrieval problems, understand document distribution, verify embeddings, test queries.
+
+### 4. Integrated Streamlit Dashboard
+
+Built-in analytics with 7 interactive Plotly charts:
 
 1. **Feedback Distribution** - Pie chart of positive/negative feedback
 2. **Feedback Timeline** - Trend analysis over time
@@ -204,6 +333,10 @@ Integrated dashboard with 7 interactive Plotly charts:
 - Key metrics: total queries, positive %, avg response time, avg sources
 - CSV data export for external analysis
 
+**Access:** Main app → "📊 Monitoring Dashboard" tab
+
+**Use case:** End-user feedback analysis, understand query patterns, identify improvement areas.
+
 ## 📁 Project Structure
 
 ```
@@ -214,10 +347,14 @@ rag_project/
 ├── feedback_storage.py                 # User feedback & interaction logging
 ├── retrieval_evaluation.py             # Retrieval evaluation script
 ├── llm_evaluation.py                   # LLM prompt evaluation script
-├── requirements.txt                    # Python dependencies (178 packages)
+├── requirements.txt                    # Python dependencies
 ├── .env                                # Environment configuration
 ├── Dockerfile                          # Container definition
-├── docker-compose.yml                  # Container orchestration
+├── docker-compose.yml                  # Container orchestration (4 services)
+├── prometheus.yml                      # Prometheus configuration
+├── grafana-datasources.yml             # Grafana data sources
+├── grafana-dashboards.yml              # Grafana dashboard provisioning
+├── grafana-dashboard.json              # Pre-built Grafana dashboard
 ├── data/                               # Document storage (your PDFs/TXTs)
 ├── chroma_db/                          # Vector database (auto-generated)
 └── feedback_data.json                  # Analytics data (auto-generated)
@@ -227,9 +364,10 @@ rag_project/
 
 - **LLM**: Google Gemini 2.5 Pro
 - **Embeddings**: text-embedding-004
-- **Vector DB**: ChromaDB
-- **Framework**: LangChain
+- **Vector DB**: ChromaDB (with Admin UI)
+- **Framework**: LangChain (with LangSmith tracing)
 - **Interface**: Streamlit
+- **Monitoring**: Prometheus + Grafana + LangSmith
 - **Containerization**: Docker & Docker Compose
 - **Analytics**: Plotly for visualizations
 - **Language**: Python 3.12

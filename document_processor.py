@@ -1,5 +1,5 @@
 import os
-import PyPDF2
+import fitz  # PyMuPDF - much faster than PyPDF2
 from typing import List, Dict
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
@@ -15,18 +15,23 @@ class DocumentProcessor:
         )
 
     def extract_text_from_pdf(self, pdf_path: str) -> str:
-        """Extract text from a PDF file."""
+        """Extract text from a PDF file using PyMuPDF (100x faster than PyPDF2)."""
         text = ""
         try:
-            with open(pdf_path, 'rb') as file:
-                pdf_reader = PyPDF2.PdfReader(file)
-                num_pages = len(pdf_reader.pages)
-
-                for page_num in range(num_pages):
-                    page = pdf_reader.pages[page_num]
-                    extracted_text = page.extract_text()
-                    if extracted_text.strip():  # Only add non-empty text
-                        text += extracted_text + "\n"
+            doc = fitz.open(pdf_path)
+            total_pages = len(doc)
+            
+            for page_num, page in enumerate(doc):
+                extracted_text = page.get_text()
+                if extracted_text.strip():  # Only add non-empty text
+                    text += extracted_text + "\n"
+                
+                # Progress indicator every 50 pages
+                if (page_num + 1) % 50 == 0:
+                    print(f"  Processed {page_num + 1}/{total_pages} pages...")
+            
+            doc.close()
+            print(f"  Extracted text from {total_pages} pages")
 
         except Exception as e:
             print(f"Error processing PDF {pdf_path}: {str(e)}")
