@@ -225,7 +225,7 @@ rag_project/
 
 ## 🛠️ Technologies
 
-- **LLM**: Google Gemini Pro
+- **LLM**: Google Gemini 2.5 Pro
 - **Embeddings**: text-embedding-004
 - **Vector DB**: ChromaDB
 - **Framework**: LangChain
