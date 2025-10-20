@@ -223,40 +223,6 @@ rag_project/
 └── feedback_data.json                  # Analytics data (auto-generated)
 ```
 
-## 🎓 DataTalksClub Project Implementation
-
-### Complete RAG Pipeline
-- **Document Ingestion**: Automated processing of PDFs and text files with batch handling (5000 chunks/batch)
-- **Text Processing**: Intelligent chunking (1000 chars, 200 overlap)
-- **Embeddings**: Google text-embedding-004 for semantic search
-- **Vector Store**: ChromaDB with persistence
-- **Retrieval**: Optimized semantic search (k=3)
-- **Generation**: Google Gemini Pro with expert technical prompt
-- **Sources**: Always cited with expandable previews
-
-### Interface
-- Streamlit web UI with two-tab design (Q&A + Dashboard)
-- Real-time processing, chat history, source explorer
-- Auto-initialization and persistence across refreshes
-
-### Ingestion Pipeline
-- Automated Python script with error handling
-- Auto-detects existing vector store or creates new one
-- Batch processing to avoid API limits
-- Supports PDF and TXT formats
-
-### Reproducibility
-- Clear setup instructions for local and Docker deployment
-- All dependencies pinned in requirements.txt
-- Sample documents included
-- Works on macOS, Linux, and Windows
-
-### Containerization
-- Complete docker-compose.yml with all services
-- Named volumes for data persistence
-- Health checks, resource limits, security hardening
-- Production-ready configuration
-
 ## 🛠️ Technologies
 
 - **LLM**: Google Gemini Pro
@@ -288,5 +254,3 @@ rag_project/
 - Conversational memory for follow-up questions
 
 ---
-
-**Built for DataTalksClub LLM Zoomcamp** | [Report Issues](https://github.com/yourusername/documind/issues)
